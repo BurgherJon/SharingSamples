@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+  <meta name="google-signin-scope" content="profile email">
+  <meta name="google-signin-client_id" content="424262593373-bkcrdnt5nfc1vqhinus9p4lbhbgevcr0.apps.googleusercontent.com">
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+<h1>Welcome to the New Player Page for LTHOI</h1>
+To pair, please follow these steps:
+<ol>
+  <li>If you don't want to play Leave the House Out of It, do NOT fill in this form.  Your invitation will expire and the person who invited you will be alerted.  You will be removed from our database entirely.</li>
+  <li>Signin to your Google Account.
+    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div></li>
+  <li>Fill in your first name and last initial.<br>
+    <input type="text" id="fn" value="Your First Name"><br>
+    <input type="text" id="li" value="Your last initial"><br>
+    <button align="center" onclick="onSubmit()">Accept Invitation to Play Leave The House Out of It</button></li>
+</ol>
+<p id="error"></p>
+<script>
+  var access_token="Unregistered";
+  function onSignIn(googleUser)
+  {
+    // The ID token you need to pass to your backend:
+    access_token = googleUser.getAuthResponse().access_token;
+  }
+
+  function onSubmit()
+  {
+    // Get the user_id from the QSP to pass
+    var urlParams = new URLSearchParams(window.location.search);
+    var uid = urlParams.get('uid');
+
+    var request = new XMLHttpRequest();
+    request.open('POST', ('https://3e0jzvs15i.execute-api.us-east-1.amazonaws.com/Prod/LTHOIdev/bff/pair?uid=' + uid), true);
+    request.setRequestHeader('googleToken', access_token);
+
+    try {
+      request.send('{ "first_name" : "' + document.getElementById("fn").value + '", "last_initial" : "' + document.getElementById("li").value + '" }');
+
+      if (request.status != 200)
+      {
+        document.getElementById("error").innerText = 'That did not work.  Are you sure you were invited?  logged in?';
+      }
+      else
+      {
+        window.location.replace("http://d1ckiukbpsslrg.cloudfront.net/");
+      }
+    }
+    catch (err)
+    {
+      document.getElementById("error").innerText = 'That did not work.  Are you sure you were invited?  logged in?';
+    }
+
+
+  }
+
+</script>
+</body>
+</html>
